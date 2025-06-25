@@ -135,58 +135,58 @@ class LoginView(APIView):
 #             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # class OTPVerifyView(APIView):
-#     permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.AllowAny]
     
-#     def post(self, request):
-#         serializer = OTPVerifySerializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
+    def post(self, request):
+        serializer = OTPVerifySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         
-#         verification_type = serializer.validated_data['verification_type']
-#         code = serializer.validated_data['code']
+        verification_type = serializer.validated_data['verification_type']
+        code = serializer.validated_data['code']
         
-#         try:
-#             if verification_type == 'email':
-#                 email = serializer.validated_data['email']
-#                 user = User.objects.get(email=email)
-#             else:
-#                 phone_number = serializer.validated_data['phone_number']
-#                 user = User.objects.get(phone_number=phone_number)
+        try:
+            if verification_type == 'email':
+                email = serializer.validated_data['email']
+                user = User.objects.get(email=email)
+            else:
+                phone_number = serializer.validated_data['phone_number']
+                user = User.objects.get(phone_number=phone_number)
             
-#             # Find valid OTP
-#             otp_verification = OTPVerification.objects.filter(
-#                 user=user,
-#                 verification_type=verification_type,
-#                 code=code,
-#                 is_used=False,
-#                 expires_at__gt=timezone.now()
-#             ).first()
+            # Find valid OTP
+            otp_verification = OTPVerification.objects.filter(
+                user=user,
+                verification_type=verification_type,
+                code=code,
+                is_used=False,
+                expires_at__gt=timezone.now()
+            ).first()
             
-#             if not otp_verification:
-#                 return Response({
-#                     'error': 'Invalid or expired OTP code.'
-#                 }, status=status.HTTP_400_BAD_REQUEST)
+            if not otp_verification:
+                return Response({
+                    'error': 'Invalid or expired OTP code.'
+                }, status=status.HTTP_400_BAD_REQUEST)
             
-#             # Mark OTP as used and verify user
-#             otp_verification.is_used = True
-#             otp_verification.save()
+            # Mark OTP as used and verify user
+            otp_verification.is_used = True
+            otp_verification.save()
             
-#             user.is_verified = True
-#             user.save()
+            user.is_verified = True
+            user.save()
             
-#             # Generate tokens for automatic login
-#             refresh = RefreshToken.for_user(user)
+            # Generate tokens for automatic login
+            refresh = RefreshToken.for_user(user)
             
-#             return Response({
-#                 'message': 'Account verified successfully.',
-#                 'refresh': str(refresh),
-#                 'access': str(refresh.access_token),
-#                 'user': UserProfileSerializer(user).data
-#             })
+            return Response({
+                'message': 'Account verified successfully.',
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+                'user': UserProfileSerializer(user).data
+            })
             
-#         except User.DoesNotExist:
-#             return Response({
-#                 'error': 'User not found.'
-#             }, status=status.HTTP_404_NOT_FOUND)
+        except User.DoesNotExist:
+            return Response({
+                'error': 'User not found.'
+            }, status=status.HTTP_404_NOT_FOUND)
 
 class ProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = UserProfileSerializer
