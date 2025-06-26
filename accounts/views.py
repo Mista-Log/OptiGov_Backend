@@ -39,7 +39,7 @@ class RegisterView(generics.CreateAPIView):
             'role': user.role
         }, status=status.HTTP_201_CREATED)
 
-# class LoginView(APIView):
+class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
     
     def post(self, request):
