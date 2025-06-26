@@ -28,7 +28,7 @@ SECRET_KEY = "django-insecure-rg44*rtyf)nh%h2-*_kau5gbq^@x0a80az&y(ent&-sd*6+lo0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', "https://optigov-backend.onrender.com"]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'optigov-backend.onrender.com']
 
 
 # Application definition
