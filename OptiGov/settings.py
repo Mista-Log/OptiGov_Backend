@@ -153,7 +153,9 @@ USE_TZ = True
 
 # Static files
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Where collected static files go
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # Optional: where your raw static files live
+
 
 # Media files
 MEDIA_URL = '/media/'
