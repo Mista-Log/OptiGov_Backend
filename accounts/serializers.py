@@ -31,25 +31,32 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(password=password, **validated_data)
         return user
 
+# serializers.py
+from rest_framework import serializers
+from django.contrib.auth import authenticate
+from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
-    
-    def validate(self, attrs):
-        email = attrs.get('email')
-        password = attrs.get('password')
-        
+
+    def validate(self, data):
+        email = data.get('email')
+        password = data.get('password')
+
         if email and password:
-            user = authenticate(email=email, password=password)
+            user = authenticate(request=self.context.get('request'), email=email, password=password)
             if not user:
-                raise serializers.ValidationError('Invalid credentials')
-            if not user.is_active:
-                raise serializers.ValidationError('User account is disabled')
-            attrs['user'] = user
+                raise serializers.ValidationError(_("Invalid email or password."), code='authorization')
         else:
-            raise serializers.ValidationError('Must include email and password')
-        
-        return attrs
+            raise serializers.ValidationError(_("Must include both email and password."), code='authorization')
+
+        data['user'] = user
+        return data
+
 
 class OTPRequestSerializer(serializers.Serializer):
     email = serializers.EmailField(required=False)
