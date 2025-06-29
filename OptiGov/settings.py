@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'accounts',
     'organizations',
     'request_app',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
