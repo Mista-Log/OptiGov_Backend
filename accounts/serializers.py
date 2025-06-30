@@ -6,6 +6,7 @@ import random
 import string
 from datetime import datetime, timedelta
 from django.utils import timezone
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -85,6 +86,33 @@ class AdminProfileSerializer(serializers.ModelSerializer):
         user = UserRegistrationSerializer().create(user_data)
         profile = AdminProfile.objects.create(user=user, **validated_data)
         return profile
+
+
+
+
+
+class CitizenLoginSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        if self.user.role != 'citizen':
+            raise serializers.ValidationError("User is not a citizen.")
+        return data
+
+class OrganizationLoginSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        if self.user.role != 'organization':
+            raise serializers.ValidationError("User is not an organization.")
+        return data
+
+class AdminLoginSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        if self.user.role != 'admin':
+            raise serializers.ValidationError("User is not an admin.")
+        return data
+
+
 
 
 

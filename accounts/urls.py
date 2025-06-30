@@ -8,7 +8,11 @@ from .views import (
     LogoutView, 
     CitizenRegisterView, 
     OrganizationRegisterView, 
-    AdminRegisterView
+    AdminRegisterView, 
+    CitizenLoginView, 
+    OrganizationLoginView, 
+    AdminLoginView, 
+    LogoutView
 )
 
 urlpatterns = [
@@ -18,7 +22,10 @@ urlpatterns = [
     path('register/citizen/', CitizenRegisterView.as_view(), name='citizen-register'),
     path('register/organization/', OrganizationRegisterView.as_view(), name='org-register'),
     path('register/admin/', AdminRegisterView.as_view(), name='admin-register'),
-    
+    path('login/citizen/', CitizenLoginView.as_view(), name='citizen-login'),
+    path('login/organization/', OrganizationLoginView.as_view(), name='organization-login'),
+    path('login/admin/', AdminLoginView.as_view(), name='admin-login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
     
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
