@@ -1,11 +1,12 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
-from .models import User, OTPVerification
+from .models import User, CitizenProfile, OrganizationProfile, AdminProfile
 import random
 import string
 from datetime import datetime, timedelta
 from django.utils import timezone
+
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, validators=[validate_password])
@@ -30,6 +31,63 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password')
         user = User.objects.create_user(password=password, **validated_data)
         return user
+
+class CitizenProfileSerializer(serializers.ModelSerializer):
+    user = UserRegistrationSerializer()
+
+    class Meta:
+        model = CitizenProfile
+        fields = ['user', 'date_of_birth', 'address', 'gender', 'national_id_number', 'id_document']
+
+    def create(self, validated_data):
+        user_data = validated_data.pop('user')
+        user_data['role'] = 'citizen'
+        user = UserRegistrationSerializer().create(user_data)
+        profile = CitizenProfile.objects.create(user=user, **validated_data)
+        return profile
+    
+    def create(self, validated_data):
+        validated_data.pop('password_confirm')
+        password = validated_data.pop('password')
+        user = User.objects.create_user(password=password, **validated_data)
+        return user
+
+
+class OrganizationProfileSerializer(serializers.ModelSerializer):
+    user = UserRegistrationSerializer()
+
+    class Meta:
+        model = OrganizationProfile
+        fields = [
+            'user', 'company_name', 'cac_number', 'tax_id_number',
+            'company_address', 'industry_type',
+            'cac_certificate', 'tax_clearance_certificate'
+        ]
+
+    def create(self, validated_data):
+        user_data = validated_data.pop('user')
+        user_data['role'] = 'organization'
+        user = UserRegistrationSerializer().create(user_data)
+        profile = OrganizationProfile.objects.create(user=user, **validated_data)
+        return profile
+
+
+class AdminProfileSerializer(serializers.ModelSerializer):
+    user = UserRegistrationSerializer()
+
+    class Meta:
+        model = AdminProfile
+        fields = ['user', 'government_agency', 'designation', 'staff_id', 'official_id']
+
+    def create(self, validated_data):
+        user_data = validated_data.pop('user')
+        user_data['role'] = 'admin'
+        user = UserRegistrationSerializer().create(user_data)
+        profile = AdminProfile.objects.create(user=user, **validated_data)
+        return profile
+
+
+
 
 # serializers.py
 from rest_framework import serializers
@@ -56,7 +114,6 @@ class LoginSerializer(serializers.Serializer):
 
         data['user'] = user
         return data
-
 
 class OTPRequestSerializer(serializers.Serializer):
     email = serializers.EmailField(required=False)

@@ -2,7 +2,12 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import User, OTPVerification
+from .models import User, OTPVerification, CitizenProfile, OrganizationProfile, AdminProfile
+
+admin.site.register(CitizenProfile)
+admin.site.register(OrganizationProfile)
+admin.site.register(AdminProfile)
+
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):

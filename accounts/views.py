@@ -22,6 +22,13 @@ from datetime import timedelta
 import logging
 from rest_framework_simplejwt.tokens import RefreshToken
 logger = logging.getLogger(__name__)
+from rest_framework import generics
+from .serializers import CitizenProfileSerializer, OrganizationProfileSerializer, AdminProfileSerializer
+from .models import CitizenProfile, OrganizationProfile, AdminProfile
+from rest_framework.permissions import IsAdminUser
+
+
+
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -39,6 +46,23 @@ class RegisterView(generics.CreateAPIView):
             'email': user.email,
             'role': user.role
         }, status=status.HTTP_201_CREATED)
+
+class CitizenRegisterView(generics.CreateAPIView):
+    queryset = CitizenProfile.objects.all()
+    serializer_class = CitizenProfileSerializer
+
+class OrganizationRegisterView(generics.CreateAPIView):
+    queryset = OrganizationProfile.objects.all()
+    serializer_class = OrganizationProfileSerializer
+
+class AdminRegisterView(generics.CreateAPIView):
+    queryset = AdminProfile.objects.all()
+    serializer_class = AdminProfileSerializer
+    permission_classes = [IsAdminUser]  # Only existing superusers can add more
+
+
+
+
 
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]

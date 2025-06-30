@@ -5,11 +5,21 @@ from .views import (
     # OTPRequestView,
     # OTPVerifyView,
     ProfileView,
-    LogoutView
+    LogoutView, 
+    CitizenRegisterView, 
+    OrganizationRegisterView, 
+    AdminRegisterView
 )
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
+
+
+    path('register/citizen/', CitizenRegisterView.as_view(), name='citizen-register'),
+    path('register/organization/', OrganizationRegisterView.as_view(), name='org-register'),
+    path('register/admin/', AdminRegisterView.as_view(), name='admin-register'),
+    
+    
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     # path('otp/request/', OTPRequestView.as_view(), name='otp_request'),
