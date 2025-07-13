@@ -6,6 +6,16 @@ import django.db.models.deletion
 import django.utils.timezone
 from django.conf import settings
 from django.db import migrations, models
+import uuid
+
+
+
+def gen_uuid(apps, schema_editor):
+    OrganizationProfile = apps.get_model("myapp", "OrganizationProfile")
+    for row in OrganizationProfile.objects.all():
+        row.uuid = uuid.uuid4()
+        row.save(update_fields=["uuid"])
+
 
 
 class Migration(migrations.Migration):
